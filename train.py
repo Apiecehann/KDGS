@@ -15,7 +15,7 @@ import numpy as np
 import subprocess
 cmd = 'nvidia-smi -q -d Memory |grep -A4 GPU|grep Used'
 result = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE).stdout.decode().split('\n')
-os.environ['CUDA_VISIBLE_DEVICES']=str(np.argmin([int(x.split()[2]) for x in result[:-1]]))
+os.environ['CUDA_VISIBLE_DEVICES']="2"#str(np.argmin([int(x.split()[2]) for x in result[:-1]]))
 
 os.system('echo $CUDA_VISIBLE_DEVICES')
 import warnings
@@ -105,6 +105,7 @@ def training(dataset, opt, pipe, dataset_name, testing_iterations, saving_iterat
     first_iter += 1
     for iteration in range(first_iter, opt.iterations + 1):        
         # network gui not available in scaffold-gs yet
+        """
         if network_gui.conn == None:
             network_gui.try_connect()
         while network_gui.conn != None:
@@ -119,7 +120,7 @@ def training(dataset, opt, pipe, dataset_name, testing_iterations, saving_iterat
                     break
             except Exception as e:
                 network_gui.conn = None
-
+        """
         iter_start.record()
 
         gaussians.update_learning_rate(iteration)
@@ -548,7 +549,7 @@ if __name__ == "__main__":
     safe_state(args.quiet)
 
     # Start GUI server, configure and run training
-    network_gui.init(args.ip, args.port)
+    #network_gui.init(args.ip, args.port)
     torch.autograd.set_detect_anomaly(args.detect_anomaly)
     
     # training

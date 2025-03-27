@@ -27,6 +27,7 @@ def init(wish_host, wish_port):
     global host, port, listener
     host = wish_host
     port = wish_port
+    print(wish_port)
     listener.bind((host, port))
     listener.listen()
     listener.settimeout(0)
