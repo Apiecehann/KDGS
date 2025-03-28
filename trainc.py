@@ -15,7 +15,7 @@ import numpy as np
 import subprocess
 cmd = 'nvidia-smi -q -d Memory |grep -A4 GPU|grep Used'
 result = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE).stdout.decode().split('\n')
-os.environ['CUDA_VISIBLE_DEVICES']=str(np.argmin([int(x.split()[2]) for x in result[:-1]]))
+os.environ['CUDA_VISIBLE_DEVICES']="2"#str(np.argmin([int(x.split()[2]) for x in result[:-1]]))
 
 os.system('echo $CUDA_VISIBLE_DEVICES')
 import warnings
@@ -49,6 +49,7 @@ from utils.graphics_utils import point_double_to_normal, depth_double_to_normal
 os.environ['CUDA_VISIBLE_DEVICES'] = '2'
 from pyquaternion import Quaternion
 from scene.cameras import Camera
+import copy
 lpips_fn = lpips.LPIPS(net='vgg').to('cuda')
 
 try:
@@ -87,8 +88,9 @@ def hybridCameras(realcameras,args):
     hybridCamera.append(beforeCamera)
     for index in range(1,len(realcameras)):
         hybrid=copy.deepcopy(beforeCamera)
-        q0=Quaternion._from_matrix(beforeCamera.R)
-        q1=Quaternion._from_matrix(realcameras[index].R)
+        q0=Quaternion._from_matrix(beforeCamera.R,rtol=1e-06,atol=1e-06)
+        
+        q1=Quaternion._from_matrix(realcameras[index].R,rtol=1e-06,atol=1e-06)
         R=Quaternion.slerp(q0,q1).rotation_matrix
         T=0.5*beforeCamera.T+0.5*realcameras[index].T
         hybrid.R=R
