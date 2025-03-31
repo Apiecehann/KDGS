@@ -105,8 +105,15 @@ class GaussianModel:
             ).cuda()
 
         self.opacity_dist_dim = 1 if self.add_opacity_dist else 0
+        # self.mlp_opacity = nn.Sequential(
+        #     nn.Linear(feat_dim+3+self.opacity_dist_dim, feat_dim),
+        #     nn.ReLU(True),
+        #     nn.Linear(feat_dim, n_offsets),
+        #     nn.Tanh()
+        # ).cuda()
+
         self.mlp_opacity = nn.Sequential(
-            nn.Linear(feat_dim+3+self.opacity_dist_dim, feat_dim),
+            nn.Linear(feat_dim+self.opacity_dist_dim, feat_dim),
             nn.ReLU(True),
             nn.Linear(feat_dim, n_offsets),
             nn.Tanh()
@@ -526,7 +533,7 @@ class GaussianModel:
         temp_mask = combined_mask.clone()
         combined_mask[temp_mask] = update_filter
         
-        grad_norm = torch.norm(viewspace_point_tensor.grad[update_filter,:2], dim=-1, keepdim=True)
+        grad_norm = torch.norm(viewspace_point_tensor.grad[update_filter,2:], dim=-1, keepdim=True)
         grad_norm_abs = torch.norm(viewspace_point_tensor.grad[update_filter,2:], dim=-1, keepdim=True)
         self.offset_gradient_accum[combined_mask] += grad_norm
         self.offset_denom[combined_mask] += 1
@@ -739,7 +746,8 @@ class GaussianModel:
         mkdir_p(os.path.dirname(path))
         if mode == 'split':
             self.mlp_opacity.eval()
-            opacity_mlp = torch.jit.trace(self.mlp_opacity, (torch.rand(1, self.feat_dim+3+self.opacity_dist_dim).cuda()))
+            # opacity_mlp = torch.jit.trace(self.mlp_opacity, (torch.rand(1, self.feat_dim+3+self.opacity_dist_dim).cuda()))
+            opacity_mlp = torch.jit.trace(self.mlp_opacity,(torch.rand(1, self.feat_dim + self.opacity_dist_dim).cuda()))
             opacity_mlp.save(os.path.join(path, 'opacity_mlp.pt'))
             self.mlp_opacity.train()
 

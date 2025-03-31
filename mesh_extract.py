@@ -67,11 +67,11 @@ def extract_mesh(dataset, pipeline, checkpoint_iterations=None):
             if viewpoint_cam.alpha_mask is not None:
                 depth[(viewpoint_cam.alpha_mask < 0.5)] = 0
             color_list.append(np.ascontiguousarray(rendered_img))
-            # depth[render_pkg["mask"] < alpha_thres] = 0
+            depth[render_pkg["mask"] < alpha_thres] = 0
             depth_list.append(depth[0].cpu().numpy())
 
         torch.cuda.empty_cache()
-        voxel_size = 0.005
+        voxel_size = 0.002
         o3d_device = o3d.core.Device("CPU:0")
         vbg = o3d.t.geometry.VoxelBlockGrid(attr_names=('tsdf', 'weight', 'color'),
                                             attr_dtypes=(o3c.float32,

@@ -350,9 +350,9 @@ __global__ void preprocessCUDA(int P, int D, int M,
 	}
 
     float cov2D[3];
-	float ceof;
+	float coef;
 	// Compute 2D screen-space covariance matrix
-    bool condition = computeCov2DNew(p_orig, focal_x, focal_y, tan_fovx, tan_fovy, cov3D, viewmatrix, cov2D, camera_planes + idx * 6, normals + idx, ray_planes + idx, ceof, invraycov3Ds + idx * 6);
+    bool condition = computeCov2DNew(p_orig, focal_x, focal_y, tan_fovx, tan_fovy, cov3D, viewmatrix, cov2D, camera_planes + idx * 6, normals + idx, ray_planes + idx, coef, invraycov3Ds + idx * 6);
     ts[idx] = sqrt(p_view.x*p_view.x+p_view.y*p_view.y+p_view.z*p_view.z);
 	const float3 cov = {cov2D[0], cov2D[1], cov2D[2]};
 	// Invert covariance (EWA algorithm)
@@ -392,7 +392,7 @@ __global__ void preprocessCUDA(int P, int D, int M,
 	radii[idx] = my_radius;
 	points_xy_image[idx] = point_image;
 	// Inverse 2D covariance and opacity neatly pack into one float4
-	conic_opacity[idx] = { conic.x, conic.y, conic.z, opacities[idx] * ceof};
+	conic_opacity[idx] = { conic.x, conic.y, conic.z, opacities[idx] * coef};
 	tiles_touched[idx] = (rect_max.y - rect_min.y) * (rect_max.x - rect_min.x);
 }
 
