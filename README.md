@@ -21,6 +21,7 @@ pip install torch==1.12.1+cu113 torchvision==0.13.1+cu113 -f [https://download.p
 
 # Install submodules
 pip install -r requirements.txt
+、、、
 
 # Data Preparation
 We support standard Colmap datasets (e.g., DTU, Mip-NeRF 360) and BlendedMVS. Please organize your data as follows:
