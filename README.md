@@ -56,10 +56,11 @@ To extract the mesh using our Multi-Layer Depth Extraction:
 python extract_mesh.py -m output/dtu_scan24 --iteration 30000 --depth_trunc 0.5
 ```
 
-```text
+
 ## Citation
 If you find this code useful for your research, please consider citing:
 
+```text
 @article{unigs2026,
   title={UniGS: Unified Geometry Reconstruction for Specular and Semi-transparent Surfaces via 3D Gaussian Splatting},
   author={Anonymous Authors},
